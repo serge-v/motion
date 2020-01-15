@@ -29,7 +29,7 @@ func realMain() error {
 		flagInclude = flag.String("include", "",
 			"Included declarations for mode {decls}. Comma delimited. Options: {func, type}")
 		flagShift         = flag.Int("shift", 0, "Shift value for the modes {next, prev}")
-		flagFormat        = flag.String("format", "json", "Output format. One of {json, vim}")
+		flagFormat        = flag.String("format", "json", "Output format. One of {json, vim, text}")
 		flagParseComments = flag.Bool("parse-comments", false,
 			"Parse comments and add them to AST")
 	)
@@ -92,6 +92,10 @@ func realMain() error {
 			return fmt.Errorf("VIM error: %s\n", err)
 		}
 		os.Stdout.Write(b)
+	case "text":
+		for _, r := range result.Decls {
+			fmt.Printf("%s:%d:%d: %s %s\n", r.Filename, r.Line, r.Col, r.Ident, r.Keyword)
+		}
 	default:
 		return fmt.Errorf("wrong -format value: %q.\n", *flagFormat)
 	}
